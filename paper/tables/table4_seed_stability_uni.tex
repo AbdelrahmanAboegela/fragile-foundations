@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\caption{UNI: maximum GPFR (across the 5 programs) per perturbation, across 4 re-splits of IDC's same 4 slides into different random train/held-out patch assignments (seeds 42, 7, 123, 2024 -- not 4 different slides). \texttt{jpeg} has the highest mean max-GPFR (0.253); \texttt{blur} is the most stable across seeds (std=0.006), \texttt{scanner\_color} the least (std=0.050).}
+\label{tab:seed_stability_uni}
+\begin{tabular}{lccccc}
+\toprule
+Perturbation & seed 42 & seed 7 & seed 123 & seed 2024 & mean $\pm$ std \\
+\midrule
+jpeg & 0.264 & 0.233 & 0.268 & 0.246 & 0.253 $\pm$ 0.016 \\
+scanner\_color & 0.179 & 0.091 & 0.187 & 0.101 & 0.139 $\pm$ 0.050 \\
+stain\_shift & 0.102 & 0.114 & 0.081 & 0.089 & 0.097 $\pm$ 0.015 \\
+contrast & 0.070 & 0.098 & 0.106 & 0.101 & 0.094 $\pm$ 0.016 \\
+gamma & 0.077 & 0.066 & 0.122 & 0.083 & 0.087 $\pm$ 0.025 \\
+brightness & 0.049 & 0.057 & 0.058 & 0.067 & 0.057 $\pm$ 0.007 \\
+blur & 0.022 & 0.020 & 0.022 & 0.010 & 0.019 $\pm$ 0.006 \\
+\bottomrule
+\end{tabular}
+\end{table}

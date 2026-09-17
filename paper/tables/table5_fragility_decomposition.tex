@@ -1,0 +1,18 @@
+\begin{table}[H]
+\centering
+\caption{CONCH: linear-offset correction's relative GPFR reduction (Section~\ref{sec:fragility_decomposition}), summarized per perturbation across its 5 programs. Positive = correction lowered GPFR; negative = made it worse. \texttt{jpeg}'s min ($-133\%$) is the largest actual worsening observed -- the correction is not a reliably-signed effect even within one perturbation, let alone across the suite.}
+\label{tab:fragility_decomposition}
+\begin{tabular}{lccc}
+\toprule
+Perturbation & Mean reduction & Min & Max \\
+\midrule
+brightness & 34\% & 14\% & 62\% \\
+contrast & 37\% & 12\% & 53\% \\
+gamma & 23\% & -33\% & 68\% \\
+stain\_shift & 8\% & -22\% & 43\% \\
+blur & 7\% & -29\% & 47\% \\
+jpeg & -14\% & -133\% & 56\% \\
+scanner\_color & 31\% & 5\% & 65\% \\
+\bottomrule
+\end{tabular}
+\end{table}

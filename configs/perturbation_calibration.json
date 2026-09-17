@@ -1,0 +1,103 @@
+{
+  "CCRCC": {
+    "brightness_factor": 1.2972730844424265,
+    "contrast_factor": 1.5908862946714497,
+    "gamma": 1.7546952684597268,
+    "blur_radius": 0.9999495533416414,
+    "scanner_color_strength": 8.648631911528398,
+    "_calibration_sample_ids": [
+      "INT1",
+      "INT15",
+      "INT20",
+      "INT3",
+      "INT9"
+    ]
+  },
+  "COAD": {
+    "brightness_factor": 1.231886736219375,
+    "contrast_factor": 1.6041637436162635,
+    "gamma": 1.8670577233802588,
+    "blur_radius": 1.3022020001753738,
+    "scanner_color_strength": 7.94974874447466,
+    "_calibration_sample_ids": [
+      "TENX111",
+      "TENX147",
+      "TENX148",
+      "TENX149"
+    ]
+  },
+  "HCC": {
+    "brightness_factor": 1.375724738324667,
+    "contrast_factor": 1.5652462774158484,
+    "gamma": 1.6244938696657716,
+    "blur_radius": 1.0190629253195385,
+    "scanner_color_strength": 10.62503950724194,
+    "_calibration_sample_ids": [
+      "NCBI642",
+      "NCBI643"
+    ]
+  },
+  "IDC": {
+    "brightness_factor": 1.1674702717807777,
+    "contrast_factor": 1.7308142747920823,
+    "gamma": 2.022278500930348,
+    "blur_radius": 1.0606176392025601,
+    "scanner_color_strength": 5.664761195325096,
+    "_calibration_sample_ids": [
+      "NCBI783",
+      "NCBI785",
+      "TENX95",
+      "TENX99"
+    ]
+  },
+  "LUNG": {
+    "brightness_factor": 1.2089150010364318,
+    "contrast_factor": 1.5185483517464613,
+    "gamma": 1.7978337604385202,
+    "blur_radius": 1.2247473420855168,
+    "scanner_color_strength": 6.0185188937502145,
+    "_calibration_sample_ids": [
+      "TENX118",
+      "TENX141"
+    ]
+  },
+  "LYMPH_IDC": {
+    "brightness_factor": 1.1697216506349373,
+    "contrast_factor": 1.571425381167308,
+    "gamma": 1.8048164113423524,
+    "blur_radius": 0.8075516614860754,
+    "scanner_color_strength": 4.999961764355187,
+    "_calibration_sample_ids": [
+      "NCBI681",
+      "NCBI682",
+      "NCBI683",
+      "NCBI684"
+    ]
+  },
+  "PAAD": {
+    "brightness_factor": 1.206898290981601,
+    "contrast_factor": 1.4877949168683697,
+    "gamma": 1.7490253813670549,
+    "blur_radius": 1.1339358355341393,
+    "scanner_color_strength": 6.250016844824254,
+    "_calibration_sample_ids": [
+      "TENX116",
+      "TENX126",
+      "TENX140"
+    ]
+  },
+  "PRAD": {
+    "brightness_factor": 1.3567008685085424,
+    "contrast_factor": 1.5164627401787427,
+    "gamma": 1.5881777231852778,
+    "blur_radius": 1.2247642283933107,
+    "scanner_color_strength": 10.927192956240766,
+    "_calibration_sample_ids": [
+      "MEND139",
+      "MEND144",
+      "MEND149",
+      "MEND156",
+      "MEND161"
+    ]
+  }
+}

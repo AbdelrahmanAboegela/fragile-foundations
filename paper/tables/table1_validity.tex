@@ -1,0 +1,13 @@
+\begin{table}[t]
+\centering
+\caption{Held-out (out-of-sample) predictive validity on IDC (2100 train / 900 held-out patches, seed=42). Ridge $\alpha$ selected per-gene via efficient leave-one-out cross-validation (\texttt{RidgeCV}, \texttt{alpha\_per\_target=True}); median [min, max] shown across the panel's genes.}
+\label{tab:validity}
+\begin{tabular}{lccc}
+\toprule
+Encoder & $r$ (whole panel) & $r$ (Hallmark genes) & Ridge $\alpha$ \\
+\midrule
+CONCH (ViT-B/16, 86M) & 0.559 & 0.614 & 100 [3.16, 1e+04] \\
+UNI (ViT-L/16, 307M) & 0.604 & 0.661 & 3.16e+03 [316, 1e+04] \\
+\bottomrule
+\end{tabular}
+\end{table}

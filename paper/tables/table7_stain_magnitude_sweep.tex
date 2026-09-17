@@ -1,0 +1,14 @@
+\begin{table}[t]
+\centering
+\caption{Stain-shift magnitude sweep on IDC (CONCH), including the \texttt{stain\_shift\_identity} null control (a full Macenko decompose/reconstruct round trip with NO intended stain-vector change). Any nonzero GPFR at Identity is reconstruction noise, not a real color-shift effect; the gap between Identity and Moderate is the actual effect size.}
+\label{tab:stain_sweep}
+\begin{tabular}{lccc}
+\toprule
+Magnitude & Mean SSIM & Mean GPFR & Max GPFR \\
+\midrule
+Identity (null control) & 0.981 & 0.036 & 0.081 \\
+Mild (h=1.10/e=0.90) & 0.978 & 0.041 & 0.092 \\
+Moderate (h=1.30/e=0.70) & 0.954 & 0.067 & 0.134 \\
+\bottomrule
+\end{tabular}
+\end{table}

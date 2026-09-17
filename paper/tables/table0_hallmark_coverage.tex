@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\caption{Hallmark gene-set coverage on IDC's 280-gene common panel -- the intersection across all 4 IDC samples' individual panels (288/321/280/280 genes for NCBI783/NCBI785/TENX95/TENX99 respectively; not identical across samples), i.e.\ exactly the gene set the modeling pipeline scores against. ``Shared'' counts genes that also belong to at least one other of the 5 scored programs. At this coverage, \texttt{proliferation} and \texttt{angiogenesis} are effectively small marker panels rather than comprehensive pathway scores.}
+\label{tab:hallmark_coverage}
+\begin{tabular}{lccc}
+\toprule
+Program & Genes present / total & Coverage & Shared with other programs \\
+\midrule
+immune\_activation & 16/363 & 4.4\% & 1/16 \\
+proliferation & 6/327 & 1.8\% & 0/6 \\
+hypoxia & 8/200 & 4.0\% & 4/8 \\
+stromal\_ecm & 19/200 & 9.5\% & 3/19 \\
+angiogenesis & 5/36 & 13.9\% & 4/5 \\
+\bottomrule
+\end{tabular}
+\end{table}

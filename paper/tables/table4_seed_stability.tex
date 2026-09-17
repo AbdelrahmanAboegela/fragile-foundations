@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\caption{CONCH: maximum GPFR (across the 5 programs) per perturbation, across 4 re-splits of IDC's same 4 slides into different random train/held-out patch assignments (seeds 42, 7, 123, 2024 -- not 4 different slides). \texttt{scanner\_color} has the highest mean max-GPFR (0.367); \texttt{blur} is the most stable across seeds (std=0.012), \texttt{scanner\_color} the least (std=0.051).}
+\label{tab:seed_stability}
+\begin{tabular}{lccccc}
+\toprule
+Perturbation & seed 42 & seed 7 & seed 123 & seed 2024 & mean $\pm$ std \\
+\midrule
+scanner\_color & 0.399 & 0.371 & 0.406 & 0.293 & 0.367 $\pm$ 0.051 \\
+brightness & 0.191 & 0.189 & 0.146 & 0.154 & 0.170 $\pm$ 0.023 \\
+contrast & 0.152 & 0.140 & 0.110 & 0.169 & 0.143 $\pm$ 0.025 \\
+stain\_shift & 0.134 & 0.138 & 0.154 & 0.118 & 0.136 $\pm$ 0.015 \\
+jpeg & 0.187 & 0.110 & 0.114 & 0.122 & 0.133 $\pm$ 0.036 \\
+blur & 0.118 & 0.102 & 0.130 & 0.121 & 0.118 $\pm$ 0.012 \\
+gamma & 0.088 & 0.103 & 0.104 & 0.054 & 0.087 $\pm$ 0.023 \\
+\bottomrule
+\end{tabular}
+\end{table}
