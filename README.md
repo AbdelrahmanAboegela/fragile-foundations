@@ -10,8 +10,9 @@ instability metric on the IDC (breast cancer, Xenium) cohort of
 [HEST-Bench](https://github.com/mahmoodlab/HEST).
 
 The manuscript is included at [`paper/main.pdf`](paper/main.pdf) (source:
-[`paper/main.tex`](paper/main.tex)); every number in it traces to a script
-in `src/` and a file in `results/`.
+[`paper/main.tex`](paper/main.tex)), with supplementary tables at
+[`paper/supplementary.pdf`](paper/supplementary.pdf); every number in either
+traces to a script in `src/` and a file in `results/`.
 
 ## Repository layout
 

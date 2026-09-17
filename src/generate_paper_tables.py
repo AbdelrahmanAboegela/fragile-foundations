@@ -282,7 +282,7 @@ def table5_fragility_decomposition():
     worst_pert = summary["min"].idxmin()
     worst_val = summary.loc[worst_pert, "min"]
     caption = (
-        r"CONCH: linear-offset correction's relative GPFR reduction (Section~\ref{sec:fragility_decomposition}), "
+        r"CONCH: linear-offset correction's relative GPFR reduction (main text Section 2.7), "
         r"summarized per perturbation across its 5 programs. Positive = correction lowered GPFR; negative = made "
         f"it worse. \\texttt{{{tex_escape(worst_pert)}}}'s min (${worst_val:.0f}\\%$) is the largest actual "
         r"worsening observed -- the correction is not a reliably-signed effect even within one perturbation, "
