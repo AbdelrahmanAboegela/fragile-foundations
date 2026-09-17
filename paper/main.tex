@@ -41,7 +41,7 @@ A closely related benchmarking effort, \citet{wang2025_translational}, found tha
 \label{sec:results}
 
 \subsection{Predictive validity}
-Table~\ref{tab:validity} reports held-out predictive validity for both encoders under a random 70/30 patch split. CONCH: $r=0.559$ (whole panel), $0.614$ (Hallmark genes); UNI: $r=0.604$, $0.661$. The Hallmark-restricted $r$ exceeding the whole-panel $r$ for both encoders indicates the per-target-$\alpha$ Ridge fitting (Section~\ref{sec:methods}) is working where it matters: the whole-panel mean is dragged down by many genes on this 280-gene targeted panel with little real histological signal, which is expected biology rather than a modeling failure. Section~\ref{sec:loso} reports a further, spatially-disjoint check on this number, since the random patch split used here cannot rule out train/held-out pixel overlap (Section~\ref{sec:loso}).
+Table~\ref{tab:validity} reports held-out predictive validity for both encoders under a random 70/30 patch split. CONCH: $r=0.559$ (whole panel), $0.614$ (Hallmark genes); UNI: $r=0.604$, $0.661$. The Hallmark-restricted $r$ exceeding the whole-panel $r$ for both encoders indicates the per-target-$\alpha$ Ridge fitting (Section~\ref{sec:methods}) is working where it matters: the whole-panel mean is dragged down by many genes on this 280-gene targeted panel with little real histological signal, which is expected biology rather than a modeling failure. Section~\ref{sec:loso} reports a further, spatially-disjoint check on this number, since the random patch split used here cannot rule out train/held-out pixel overlap.
 
 \input{tables/table1_validity.tex}
 
