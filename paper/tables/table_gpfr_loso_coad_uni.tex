@@ -1,0 +1,46 @@
+\begin{table}[t]
+\centering
+\caption{UNI: Gene-Program Flip Rate (GPFR) per perturbation/program on COAD, leave-one-slide-out, with 95\% CI from the 4-slide cluster bootstrap (2000 resamples) and Benjamini-Hochberg FDR-corrected $q$-value across all 35 tests. $^{*}$ FDR$<$0.05 AND the CI's lower bound does not round to 0.000 -- with only 4 slides to resample, the one-sided bootstrap $p$-value is quantized (at most $4^4=256$ distinct resample outcomes, giving as few as 6--9 distinct $p$-values across all 35 tests here), so it can reject the boundary null for an interval that still visibly touches zero; requiring both keeps the star consistent with the printed interval.}
+\label{tab:gpfr_loso_coad_uni}
+\begin{tabular}{llccc}
+\toprule
+Perturbation & Program & GPFR & 95\% CI & FDR $q$ \\
+\midrule
+stain\_shift & proliferation & 0.165 & [0.053, 0.311] & 0.0006$^{*}$ \\
+scanner\_color & hypoxia & 0.159 & [0.148, 0.282] & 0.0006$^{*}$ \\
+jpeg & hypoxia & 0.153 & [0.145, 0.337] & 0.0006$^{*}$ \\
+scanner\_color & immune\_activation & 0.124 & [0.064, 0.189] & 0.0006$^{*}$ \\
+scanner\_color & proliferation & 0.122 & [0.037, 0.232] & 0.0006$^{*}$ \\
+stain\_shift & hypoxia & 0.108 & [0.055, 0.213] & 0.0006$^{*}$ \\
+jpeg & immune\_activation & 0.105 & [0.093, 0.141] & 0.0006$^{*}$ \\
+scanner\_color & angiogenesis & 0.103 & [0.065, 0.183] & 0.0006$^{*}$ \\
+jpeg & angiogenesis & 0.084 & [0.050, 0.144] & 0.0006$^{*}$ \\
+jpeg & stromal\_ecm & 0.079 & [0.055, 0.113] & 0.0006$^{*}$ \\
+contrast & hypoxia & 0.075 & [0.032, 0.175] & 0.0006$^{*}$ \\
+gamma & hypoxia & 0.072 & [0.029, 0.173] & 0.0006$^{*}$ \\
+brightness & hypoxia & 0.061 & [0.047, 0.105] & 0.0006$^{*}$ \\
+scanner\_color & stromal\_ecm & 0.059 & [0.036, 0.152] & 0.0006$^{*}$ \\
+stain\_shift & angiogenesis & 0.056 & [0.030, 0.087] & 0.0006$^{*}$ \\
+jpeg & proliferation & 0.051 & [0.025, 0.083] & 0.0006$^{*}$ \\
+gamma & angiogenesis & 0.050 & [0.013, 0.084] & 0.0006$^{*}$ \\
+stain\_shift & stromal\_ecm & 0.049 & [0.019, 0.126] & 0.0006$^{*}$ \\
+brightness & angiogenesis & 0.044 & [0.022, 0.076] & 0.0006$^{*}$ \\
+stain\_shift & immune\_activation & 0.033 & [0.022, 0.070] & 0.0006$^{*}$ \\
+brightness & proliferation & 0.026 & [0.017, 0.039] & 0.0006$^{*}$ \\
+contrast & proliferation & 0.013 & [0.005, 0.027] & 0.0006$^{*}$ \\
+brightness & immune\_activation & 0.012 & [0.007, 0.038] & 0.0006$^{*}$ \\
+contrast & angiogenesis & 0.011 & [0.007, 0.017] & 0.0006$^{*}$ \\
+gamma & proliferation & 0.010 & [0.003, 0.045] & 0.0006$^{*}$ \\
+blur & hypoxia & 0.010 & [0.006, 0.045] & 0.0006$^{*}$ \\
+blur & angiogenesis & 0.007 & [0.002, 0.010] & 0.0052$^{*}$ \\
+brightness & stromal\_ecm & 0.007 & [0.004, 0.021] & 0.0006$^{*}$ \\
+contrast & stromal\_ecm & 0.005 & [0.000, 0.014] & 0.0519 \\
+contrast & immune\_activation & 0.005 & [0.001, 0.015] & 0.0025$^{*}$ \\
+gamma & immune\_activation & 0.004 & [0.000, 0.010] & 0.0203 \\
+gamma & stromal\_ecm & 0.003 & [0.001, 0.013] & 0.0048$^{*}$ \\
+blur & stromal\_ecm & 0.001 & [0.000, 0.009] & 0.2989 \\
+blur & proliferation & 0.000 & [0.000, 0.002] & 0.4445 \\
+blur & immune\_activation & 0.000 & [0.000, 0.002] & 0.8461 \\
+\bottomrule
+\end{tabular}
+\end{table}

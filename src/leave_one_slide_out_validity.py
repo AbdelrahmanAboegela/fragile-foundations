@@ -162,7 +162,16 @@ def main():
         train_emb, heldout_emb = embeddings[train_mask], embeddings[heldout_mask]
         train_expr, heldout_expr = expr_norm[train_mask], expr_norm[heldout_mask]
 
-        alphas = np.logspace(-2, 4, 13)
+        # Same train-only embedding standardization and widened alpha grid
+        # as main_experiment.py (2026-09-17, reviewer-caught) -- see that
+        # file's comment for why raw-scale embeddings confound cross-
+        # encoder alpha comparisons.
+        from sklearn.preprocessing import StandardScaler
+        fold_scaler = StandardScaler().fit(train_emb)
+        train_emb = fold_scaler.transform(train_emb)
+        heldout_emb = fold_scaler.transform(heldout_emb)
+
+        alphas = np.logspace(-2, 6, 17)
         head = RidgeCV(alphas=alphas, cv=None, alpha_per_target=True).fit(train_emb, train_expr)
         pred = head.predict(heldout_emb)
         r2_all, r2_all_median, r2_hm, r2_hm_median, mean_r, mean_r_hm = r2_all_and_hallmark(heldout_expr, pred)

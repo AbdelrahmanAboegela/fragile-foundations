@@ -394,6 +394,22 @@ def main():
         train_emb, heldout_emb = clean_embeddings[train_idx], clean_embeddings[heldout_idx]
         train_expr, heldout_expr = expr_df.values[train_idx], expr_df.values[heldout_idx]
 
+        # EMBEDDING STANDARDIZATION (2026-09-17, reviewer-caught): CONCH
+        # (ViT-B, 512-dim) and UNI (ViT-L, 1024-dim) embeddings were fed to
+        # RidgeCV raw, with no per-feature scaling. Ridge's penalty term
+        # ||w||^2 is only comparable in alpha units across two designs if
+        # the design matrices are on a comparable scale -- a cross-encoder
+        # claim like "UNI's Ridge head is regularized 31.6x more strongly"
+        # is otherwise confounded with the encoders' raw embedding scales,
+        # not a clean statement about relative shrinkage. Fit on TRAIN only
+        # (a standard preprocessing choice, not a leakage-introducing one)
+        # and apply the identical transform to held-out and perturbed
+        # embeddings below.
+        from sklearn.preprocessing import StandardScaler
+        embedding_scaler = StandardScaler().fit(train_emb)
+        train_emb = embedding_scaler.transform(train_emb)
+        heldout_emb = embedding_scaler.transform(heldout_emb)
+
         # PER-TARGET ALPHA FIX (2026-09-16, audit-flagged): a single shared
         # alpha (the original fix, `cv=5`) is chosen by mean R2 across ALL
         # gene outputs at once. On whole-transcriptome organs (~18-36k
@@ -407,7 +423,10 @@ def main():
         # This requires `cv=None` (sklearn's efficient generalized/LOO CV;
         # `cv!=None` and `alpha_per_target=True` are mutually exclusive in
         # sklearn — confirmed via ValueError, not assumed).
-        alphas = np.logspace(-2, 4, 13)
+        # GRID WIDENED (2026-09-17, reviewer-caught): the previous grid's
+        # top end (1e4) was the selected alpha for some genes on both
+        # encoders -- an unconfirmed-interior selection. Widened to 1e6.
+        alphas = np.logspace(-2, 6, 17)
         head = RidgeCV(alphas=alphas, cv=None, alpha_per_target=True).fit(train_emb, train_expr)
         alpha_arr = np.atleast_1d(head.alpha_)
         print(f"[validity] per-target alpha selected via efficient LOO-CV on TRAIN only: "
@@ -473,6 +492,33 @@ def main():
               f"for a constant-prediction baseline", flush=True)
 
         clean_pred_scores = score_programs(pd.DataFrame(heldout_pred_clean, columns=expr_df.columns), hallmark, prog_cfg)
+
+        # PER-PROGRAM CLEAN VALIDITY (2026-09-17, reviewer-caught): the paper
+        # reports per-gene validity (whole-panel and Hallmark-restricted) but
+        # never validity of the actual PROGRAM SCORES GPFR is computed from.
+        # A program with high GPFR but near-zero clean predictive validity
+        # (r~0) is a much less interesting finding than one that is both
+        # well-predicted AND fragile -- readers currently cannot tell these
+        # apart. Compute Pearson r and R^2 between predicted and TRUE
+        # (ground-truth) held-out program scores, per program.
+        true_program_scores = score_programs(pd.DataFrame(heldout_expr, columns=expr_df.columns), hallmark, prog_cfg)
+        program_validity_rows = []
+        for program in clean_pred_scores.columns:
+            true_vals, pred_vals = true_program_scores[program].values, clean_pred_scores[program].values
+            if true_vals.std() > 1e-8 and pred_vals.std() > 1e-8:
+                prog_r, _ = pearsonr(true_vals, pred_vals)
+                prog_r2 = float(r2_score(true_vals, pred_vals))
+            else:
+                prog_r, prog_r2 = float("nan"), float("nan")
+            program_validity_rows.append({"encoder": args.encoder, "organ": organ, "program": program,
+                                           "pearson_r": prog_r, "r2": prog_r2})
+        program_validity_df = pd.DataFrame(program_validity_rows)
+        if args.seed == 42:
+            pv_out = PROJECT_ROOT / "results" / f"program_validity_{organ.lower()}{'' if args.encoder == 'conch' else '_' + args.encoder}.csv"
+            program_validity_df.to_csv(pv_out, index=False)
+            print(f"[validity] per-program clean validity written to {pv_out}:", flush=True)
+            print(program_validity_df.to_string(index=False), flush=True)
+
         organ_perturbation_set = build_perturbation_set_for_organ(organ, perturbation_set)
         for perturbation_index, (pname, pfunc) in enumerate(organ_perturbation_set.items(), start=1):
             perturbation_start = time.time()
@@ -480,6 +526,7 @@ def main():
                   f"({perturbation_index}/{len(organ_perturbation_set)})", flush=True)
             perturbed = [pfunc(img) for img in heldout_patches]  # held-out only, not all_patches
             pert_embeddings = embed_patches(encoder, preprocess, perturbed, device, forward_fn=encoder_spec["forward"])
+            pert_embeddings = embedding_scaler.transform(pert_embeddings)  # same train-fit scaler as clean embeddings
             pert_scores = score_programs(pd.DataFrame(head.predict(pert_embeddings), columns=expr_df.columns), hallmark, prog_cfg)
             ssim_vals, lpips_vals = [], []
             metrics_start = time.time()

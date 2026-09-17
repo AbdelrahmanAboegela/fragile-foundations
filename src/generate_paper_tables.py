@@ -92,6 +92,91 @@ Organ & Model & $R^2$ (whole panel) & $R^2$ (Hallmark genes) \\
     print("Wrote table1b_baseline_comparison.tex")
 
 
+def table_program_validity():
+    """Per-program clean predictive validity (2026-09-17, reviewer-caught):
+    the paper reported per-gene validity (whole-panel and Hallmark-
+    restricted) but never validity of the actual PROGRAM SCORES GPFR is
+    computed from. A program with high GPFR but near-zero clean predictive
+    validity is a materially less interesting finding than one that is
+    both well-predicted and fragile; this table lets a reader tell those
+    cases apart, which the rest of the paper's GPFR numbers alone do not."""
+    rows = []
+    for organ in ["idc", "coad"]:
+        for encoder, label in [("conch", "CONCH"), ("uni", "UNI")]:
+            suffix = "" if encoder == "conch" else f"_{encoder}"
+            df = pd.read_csv(RESULTS / f"program_validity_{organ}{suffix}.csv")
+            for _, r in df.iterrows():
+                rows.append(f"{organ.upper()} & {label} & {tex_escape(r['program'])} & "
+                            f"{r['pearson_r']:.3f} & {r['r2']:.3f} \\\\")
+    tex = r"""\begin{table}[t]
+\centering
+\caption{Clean (unperturbed) held-out predictive validity of the actual program scores GPFR is computed from -- Pearson $r$ and $R^2$ between the predicted and true program score per held-out patch, per Hallmark program, per organ and encoder (seed=42). This lets a high-GPFR program be distinguished from one that is simply poorly predicted to begin with.}
+\label{tab:program_validity}
+\begin{tabular}{llccc}
+\toprule
+Organ & Encoder & Program & $r$ & $R^2$ \\
+\midrule
+""" + "\n".join(rows) + r"""
+\bottomrule
+\end{tabular}
+\end{table}
+"""
+    (OUT / "table_program_validity.tex").write_text(tex)
+    print("Wrote table_program_validity.tex")
+
+
+def table_loso_gpfr_comparison():
+    """Compares the headline GPFR result (Ridge head fit on a random 70/30
+    patch split) against the same analysis with the head fit under
+    leave-one-slide-out (loso_gpfr.py) -- closing the gap between the
+    paper's own random-split leakage finding (Section 2.3) and its
+    continued use of a random-split-trained head for the primary
+    robustness result. Reports each perturbation's peak GPFR (max across
+    the 5 programs) under both designs, per organ/encoder, so a reader can
+    see directly whether the dominant-perturbation ranking survives moving
+    to a design where every prediction (clean and perturbed) comes from a
+    slide the head never saw during fitting."""
+    rows = []
+    summary_lines = []
+    for organ in ["idc", "coad"]:
+        for encoder, label in [("conch", "CONCH"), ("uni", "UNI")]:
+            suffix = "" if encoder == "conch" else f"_{encoder}"
+            random_df = pd.read_csv(RESULTS / f"{organ}_core{suffix}_with_stats.csv")
+            loso_df = pd.read_csv(RESULTS / f"loso_gpfr_{organ}{suffix}_with_stats.csv")
+            random_peak = random_df.loc[random_df.groupby("perturbation")["gpfr"].idxmax()].set_index("perturbation")["gpfr"]
+            loso_peak = loso_df.loc[loso_df.groupby("perturbation")["gpfr"].idxmax()].set_index("perturbation")["gpfr"]
+            perts = sorted(set(random_peak.index) | set(loso_peak.index), key=lambda p: -random_peak.get(p, 0))
+            for p in perts:
+                rows.append(f"{organ.upper()} & {label} & {tex_escape(p)} & "
+                            f"{random_peak.get(p, float('nan')):.3f} & {loso_peak.get(p, float('nan')):.3f} \\\\")
+            random_top, loso_top = random_peak.idxmax(), loso_peak.idxmax()
+            match = "same" if random_top == loso_top else "DIFFERENT"
+            summary_lines.append(f"{organ.upper()}/{label}: random-split top={tex_escape(random_top)}, "
+                                  f"LOSO top={tex_escape(loso_top)} ({match})")
+    caption = ("Peak GPFR (max across 5 programs) per perturbation under the primary random-split design "
+               "versus leave-one-slide-out (every clean and perturbed prediction from a head that never saw "
+               "that slide during fitting). " + "; ".join(summary_lines) + ".")
+    tex = r"""\begin{table}[H]
+\centering
+\caption{""" + caption + r"""}
+\label{tab:loso_gpfr_comparison}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llccc}
+\toprule
+Organ & Encoder & Perturbation & Random-split peak GPFR & LOSO peak GPFR \\
+\midrule
+""" + "\n".join(rows) + r"""
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+"""
+    (OUT / "table_loso_gpfr_comparison.tex").write_text(tex)
+    print("Wrote table_loso_gpfr_comparison.tex")
+    for line in summary_lines:
+        print(f"  {line}")
+
+
 def table8_loso_validity():
     """Leave-one-slide-out validity (Section~\\ref{sec:loso}, second- and
     third-adversarial-review-caught): the random-patch-split validity
@@ -473,11 +558,17 @@ if __name__ == "__main__":
     table0_hallmark_coverage()
     table1_validity()
     table1b_baseline_comparison()
+    table_program_validity()
     table8_loso_validity()
     table2_gpfr_significance("CONCH", "idc_core_with_stats.csv", "conch", organ_label="IDC")
     table2_gpfr_significance("UNI", "idc_core_uni_with_stats.csv", "uni", organ_label="IDC")
     table2_gpfr_significance("CONCH", "coad_core_with_stats.csv", "coad_conch", organ_label="COAD")
     table2_gpfr_significance("UNI", "coad_core_uni_with_stats.csv", "coad_uni", organ_label="COAD")
+    table2_gpfr_significance("CONCH", "loso_gpfr_idc_with_stats.csv", "loso_idc_conch", organ_label="IDC, leave-one-slide-out")
+    table2_gpfr_significance("UNI", "loso_gpfr_idc_uni_with_stats.csv", "loso_idc_uni", organ_label="IDC, leave-one-slide-out")
+    table2_gpfr_significance("CONCH", "loso_gpfr_coad_with_stats.csv", "loso_coad_conch", organ_label="COAD, leave-one-slide-out")
+    table2_gpfr_significance("UNI", "loso_gpfr_coad_uni_with_stats.csv", "loso_coad_uni", organ_label="COAD, leave-one-slide-out")
+    table_loso_gpfr_comparison()
     table3_z_sensitivity()
     table4_seed_stability("CONCH", {"IDC": "main_experiment_results_idc.csv", "COAD": "main_experiment_results_coad.csv"}, "", "")
     table4_seed_stability("UNI", {"IDC": "main_experiment_results_idc_uni.csv", "COAD": "main_experiment_results_coad_uni.csv"}, "_uni", "_uni")

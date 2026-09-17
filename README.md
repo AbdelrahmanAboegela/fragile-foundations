@@ -31,6 +31,10 @@ run_coad.sh    Reruns the full COAD pipeline (both encoders, all seeds,
                floor baselines, leave-one-slide-out, statistical tests) --
                the second-organ generalization check
 run_loso.sh    Runs the leave-one-slide-out validity check on IDC
+run_loso_gpfr.sh  Runs the primary GPFR analysis itself under leave-one-
+               slide-out (both organs, both encoders) -- closes the gap
+               between showing the random-split design admits pixel
+               overlap and using a random-split-trained head for GPFR
 ```
 
 ## Reproducing the results
@@ -48,6 +52,8 @@ run_loso.sh    Runs the leave-one-slide-out validity check on IDC
 5. Run `./run_coad.sh` to reproduce the second-organ (COAD) generalization
    check (both encoders, 4 seeds, floor baselines, leave-one-slide-out,
    statistical tests).
+6. Run `./run_loso_gpfr.sh` to reproduce the primary GPFR result under
+   leave-one-slide-out (both organs, both encoders).
 
 Individual analysis steps can also be run directly, e.g.:
 

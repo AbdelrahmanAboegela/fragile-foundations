@@ -1,10 +1,11 @@
 """Direct, script-backed measurement of the library-size/cellularity confound.
 
-WHY THIS EXISTS: an early note describing this project quoted "a patch's
-predicted proliferation score correlated with its own raw total panel
-count at r=0.82" before the library-size normalization fix -- but no
-script or CSV ever computed this number directly. That is exactly the
-kind of hand-transcribed, unverifiable number the project's own
+WHY THIS EXISTS (2026-09-17, second-adversarial-review-caught): the paper
+and CLAUDE.md both quoted "a patch's predicted proliferation score
+correlated with its own raw total panel count at r=0.82" before the
+library-size normalization fix -- but no script or CSV ever computed this
+number; `grep -rn "0.82" src/` only found it in two code COMMENTS. That is
+exactly the kind of hand-transcribed, unverifiable number the project's own
 Data-and-Code-Availability section promises never appears. This script
 fits the SAME Ridge head twice on the SAME train/held-out split (seed 42,
 IDC, CONCH) -- once on raw (unnormalized) target counts, once on the
@@ -84,8 +85,15 @@ def main():
     embeddings = embed_patches(encoder, preprocess, all_patches, device, forward_fn=ENCODERS["conch"]["forward"])
     train_emb, heldout_emb = embeddings[train_idx], embeddings[heldout_idx]
 
+    # Same train-only embedding standardization and widened alpha grid as
+    # main_experiment.py (2026-09-17, reviewer-caught) for consistency.
+    from sklearn.preprocessing import StandardScaler
+    scaler = StandardScaler().fit(train_emb)
+    train_emb = scaler.transform(train_emb)
+    heldout_emb = scaler.transform(heldout_emb)
+
     hallmark, prog_cfg = load_hallmark_gene_sets(), load_program_config()
-    alphas = np.logspace(-2, 4, 13)
+    alphas = np.logspace(-2, 6, 17)
     rows = []
     for label, target in [("raw_unnormalized", expr_raw), ("library_size_normalized", expr_norm)]:
         head = RidgeCV(alphas=alphas, cv=None, alpha_per_target=True).fit(train_emb, target[train_idx])

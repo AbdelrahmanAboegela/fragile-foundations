@@ -1,0 +1,41 @@
+\begin{table}[H]
+\centering
+\caption{Peak GPFR (max across 5 programs) per perturbation under the primary random-split design versus leave-one-slide-out (every clean and perturbed prediction from a head that never saw that slide during fitting). IDC/CONCH: random-split top=scanner\_color, LOSO top=scanner\_color (same); IDC/UNI: random-split top=jpeg, LOSO top=jpeg (same); COAD/CONCH: random-split top=scanner\_color, LOSO top=scanner\_color (same); COAD/UNI: random-split top=scanner\_color, LOSO top=stain\_shift (DIFFERENT).}
+\label{tab:loso_gpfr_comparison}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llccc}
+\toprule
+Organ & Encoder & Perturbation & Random-split peak GPFR & LOSO peak GPFR \\
+\midrule
+IDC & CONCH & scanner\_color & 0.390 & 0.184 \\
+IDC & CONCH & jpeg & 0.190 & 0.123 \\
+IDC & CONCH & brightness & 0.183 & 0.078 \\
+IDC & CONCH & stain\_shift & 0.160 & 0.082 \\
+IDC & CONCH & contrast & 0.158 & 0.085 \\
+IDC & CONCH & blur & 0.121 & 0.093 \\
+IDC & CONCH & gamma & 0.083 & 0.074 \\
+IDC & UNI & jpeg & 0.262 & 0.317 \\
+IDC & UNI & scanner\_color & 0.198 & 0.261 \\
+IDC & UNI & stain\_shift & 0.106 & 0.155 \\
+IDC & UNI & contrast & 0.079 & 0.108 \\
+IDC & UNI & gamma & 0.079 & 0.060 \\
+IDC & UNI & brightness & 0.051 & 0.083 \\
+IDC & UNI & blur & 0.020 & 0.027 \\
+COAD & CONCH & scanner\_color & 0.620 & 0.462 \\
+COAD & CONCH & jpeg & 0.301 & 0.150 \\
+COAD & CONCH & blur & 0.284 & 0.243 \\
+COAD & CONCH & brightness & 0.221 & 0.186 \\
+COAD & CONCH & contrast & 0.128 & 0.094 \\
+COAD & CONCH & stain\_shift & 0.112 & 0.116 \\
+COAD & CONCH & gamma & 0.069 & 0.047 \\
+COAD & UNI & scanner\_color & 0.213 & 0.159 \\
+COAD & UNI & stain\_shift & 0.202 & 0.165 \\
+COAD & UNI & jpeg & 0.193 & 0.153 \\
+COAD & UNI & brightness & 0.110 & 0.061 \\
+COAD & UNI & contrast & 0.077 & 0.075 \\
+COAD & UNI & gamma & 0.073 & 0.072 \\
+COAD & UNI & blur & 0.047 & 0.010 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

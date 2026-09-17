@@ -1,0 +1,31 @@
+\begin{table}[t]
+\centering
+\caption{Clean (unperturbed) held-out predictive validity of the actual program scores GPFR is computed from -- Pearson $r$ and $R^2$ between the predicted and true program score per held-out patch, per Hallmark program, per organ and encoder (seed=42). This lets a high-GPFR program be distinguished from one that is simply poorly predicted to begin with.}
+\label{tab:program_validity}
+\begin{tabular}{llccc}
+\toprule
+Organ & Encoder & Program & $r$ & $R^2$ \\
+\midrule
+IDC & CONCH & immune\_activation & 0.780 & 0.478 \\
+IDC & CONCH & proliferation & 0.604 & 0.239 \\
+IDC & CONCH & hypoxia & 0.483 & 0.018 \\
+IDC & CONCH & stromal\_ecm & 0.735 & 0.397 \\
+IDC & CONCH & angiogenesis & 0.715 & 0.374 \\
+IDC & UNI & immune\_activation & 0.818 & 0.542 \\
+IDC & UNI & proliferation & 0.687 & 0.387 \\
+IDC & UNI & hypoxia & 0.530 & 0.091 \\
+IDC & UNI & stromal\_ecm & 0.732 & 0.410 \\
+IDC & UNI & angiogenesis & 0.683 & 0.322 \\
+COAD & CONCH & immune\_activation & 0.658 & 0.198 \\
+COAD & CONCH & proliferation & 0.810 & 0.621 \\
+COAD & CONCH & hypoxia & 0.467 & -0.184 \\
+COAD & CONCH & stromal\_ecm & 0.769 & 0.433 \\
+COAD & CONCH & angiogenesis & 0.651 & 0.312 \\
+COAD & UNI & immune\_activation & 0.711 & 0.328 \\
+COAD & UNI & proliferation & 0.849 & 0.692 \\
+COAD & UNI & hypoxia & 0.532 & 0.038 \\
+COAD & UNI & stromal\_ecm & 0.812 & 0.536 \\
+COAD & UNI & angiogenesis & 0.729 & 0.471 \\
+\bottomrule
+\end{tabular}
+\end{table}
