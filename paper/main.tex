@@ -183,10 +183,10 @@ With only 4 slides, the cluster bootstrap's resampling distribution is itself co
 A held-out Pearson $r$ or $R^2$ is only informative relative to a floor. We fit two floor baselines on the identical IDC train/held-out split (seed 42): (1) \texttt{training-mean}, which predicts every held-out patch's expression as the training set's per-gene mean; and (2) \texttt{total-counts-linear}, a per-gene linear regression from a single feature, the patch's own raw total panel counts. We report $R^2$ rather than Pearson $r$ for this comparison because $r$ is undefined for \texttt{training-mean}'s constant prediction.
 
 \section*{Data Availability}
-Patch and expression data are from HEST-Bench \citep{hest1k_2024} (CC BY-NC-SA 4.0); the IDC samples used here originate from publicly released 10x Genomics Xenium breast cancer datasets. Hallmark gene sets are retrieved from Enrichr's public MSigDB\_Hallmark\_2020 mirror. All results files underlying every table and figure in this paper, and the perturbation-calibration configuration, are available at [REPOSITORY URL / DOI].
+Patch and expression data are from HEST-Bench \citep{hest1k_2024} (CC BY-NC-SA 4.0); the IDC samples used here originate from publicly released 10x Genomics Xenium breast cancer datasets. Hallmark gene sets are retrieved from Enrichr's public MSigDB\_Hallmark\_2020 mirror. All results files underlying every table and figure in this paper, and the perturbation-calibration configuration, are available at \url{https://github.com/AbdelrahmanAboegela/fragile-foundations}.
 
 \section*{Code Availability}
-All analysis code (perturbation implementations, calibration, statistical testing, table/figure generation) is available at [REPOSITORY URL / DOI]. CONCH and UNI checkpoints are obtained from their respective gated HuggingFace repositories under each model's own license terms and used strictly as frozen feature extractors.
+All analysis code (perturbation implementations, calibration, statistical testing, table/figure generation) is available at \url{https://github.com/AbdelrahmanAboegela/fragile-foundations}. CONCH and UNI checkpoints are obtained from their respective gated HuggingFace repositories under each model's own license terms and used strictly as frozen feature extractors.
 
 \section*{Author Contributions}
 A.A.A. conceived the study, designed and implemented the analysis pipeline, performed all experiments and statistical analyses, and wrote the manuscript.
