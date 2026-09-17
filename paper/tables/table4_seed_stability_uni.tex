@@ -1,18 +1,27 @@
 \begin{table}[t]
 \centering
-\caption{UNI: maximum GPFR (across the 5 programs) per perturbation, across 4 re-splits of IDC's same 4 slides into different random train/held-out patch assignments (seeds 42, 7, 123, 2024 -- not 4 different slides). \texttt{jpeg} has the highest mean max-GPFR (0.253); \texttt{blur} is the most stable across seeds (std=0.006), \texttt{scanner\_color} the least (std=0.050).}
+\caption{UNI: maximum GPFR (across the 5 programs) per perturbation, across 4 re-splits of each organ's same slides into different random train/held-out patch assignments (seeds 42, 7, 123, 2024 -- not different slides). On IDC, \texttt{jpeg} has the highest mean max-GPFR (0.253); \texttt{blur} is the most stable across seeds (std=0.006), \texttt{scanner\_color} the least (std=0.050). On COAD, \texttt{stain\_shift} has the highest mean max-GPFR (0.244); \texttt{contrast} is the most stable across seeds (std=0.007), \texttt{jpeg} the least (std=0.044).}
 \label{tab:seed_stability_uni}
-\begin{tabular}{lccccc}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llccccc}
 \toprule
-Perturbation & seed 42 & seed 7 & seed 123 & seed 2024 & mean $\pm$ std \\
+Organ & Perturbation & seed 42 & seed 7 & seed 123 & seed 2024 & mean $\pm$ std \\
 \midrule
-jpeg & 0.264 & 0.233 & 0.268 & 0.246 & 0.253 $\pm$ 0.016 \\
-scanner\_color & 0.179 & 0.091 & 0.187 & 0.101 & 0.139 $\pm$ 0.050 \\
-stain\_shift & 0.102 & 0.114 & 0.081 & 0.089 & 0.097 $\pm$ 0.015 \\
-contrast & 0.070 & 0.098 & 0.106 & 0.101 & 0.094 $\pm$ 0.016 \\
-gamma & 0.077 & 0.066 & 0.122 & 0.083 & 0.087 $\pm$ 0.025 \\
-brightness & 0.049 & 0.057 & 0.058 & 0.067 & 0.057 $\pm$ 0.007 \\
-blur & 0.022 & 0.020 & 0.022 & 0.010 & 0.019 $\pm$ 0.006 \\
+IDC & jpeg & 0.264 & 0.233 & 0.268 & 0.246 & 0.253 $\pm$ 0.016 \\
+IDC & scanner\_color & 0.179 & 0.091 & 0.187 & 0.101 & 0.139 $\pm$ 0.050 \\
+IDC & stain\_shift & 0.102 & 0.114 & 0.081 & 0.089 & 0.097 $\pm$ 0.015 \\
+IDC & contrast & 0.070 & 0.098 & 0.106 & 0.101 & 0.094 $\pm$ 0.016 \\
+IDC & gamma & 0.077 & 0.066 & 0.122 & 0.083 & 0.087 $\pm$ 0.025 \\
+IDC & brightness & 0.049 & 0.057 & 0.058 & 0.067 & 0.057 $\pm$ 0.007 \\
+IDC & blur & 0.022 & 0.020 & 0.022 & 0.010 & 0.019 $\pm$ 0.006 \\
+COAD & stain\_shift & 0.210 & 0.291 & 0.218 & 0.258 & 0.244 $\pm$ 0.038 \\
+COAD & jpeg & 0.189 & 0.222 & 0.192 & 0.283 & 0.222 $\pm$ 0.044 \\
+COAD & scanner\_color & 0.201 & 0.208 & 0.194 & 0.227 & 0.207 $\pm$ 0.014 \\
+COAD & brightness & 0.114 & 0.113 & 0.086 & 0.119 & 0.108 $\pm$ 0.015 \\
+COAD & gamma & 0.061 & 0.076 & 0.113 & 0.082 & 0.083 $\pm$ 0.022 \\
+COAD & contrast & 0.077 & 0.071 & 0.088 & 0.081 & 0.079 $\pm$ 0.007 \\
+COAD & blur & 0.047 & 0.062 & 0.038 & 0.063 & 0.052 $\pm$ 0.012 \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}

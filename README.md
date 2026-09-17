@@ -6,8 +6,9 @@ H&E histology (via frozen CONCH/UNI foundation models and a RidgeCV linear
 probe) are stable under routine, non-adversarial image perturbations —
 JPEG compression, brightness/contrast/gamma shift, blur, scanner-color
 shift, and H&E stain variation — using a Gene-Program Flip Rate (GPFR)
-instability metric on the IDC (breast cancer, Xenium) cohort of
-[HEST-Bench](https://github.com/mahmoodlab/HEST).
+instability metric on two independent Xenium cohorts of
+[HEST-Bench](https://github.com/mahmoodlab/HEST): IDC (breast cancer) and
+COAD (colorectal adenocarcinoma).
 
 The manuscript is included at [`paper/main.pdf`](paper/main.pdf) (source:
 [`paper/main.tex`](paper/main.tex)), with supplementary tables at
@@ -24,9 +25,12 @@ results/    All results CSVs and figures referenced by the paper's tables
 configs/    Per-organ perturbation calibration constants
 paper/      Manuscript source (main.tex, references.bib), generated
             tables/figures, and the compiled PDF
-rerun_all.sh   Reruns the full pipeline (both encoders, all seeds, all
+rerun_all.sh   Reruns the full IDC pipeline (both encoders, all seeds, all
                sweeps) and regenerates every table and figure
-run_loso.sh    Runs the leave-one-slide-out validity check
+run_coad.sh    Reruns the full COAD pipeline (both encoders, all seeds,
+               floor baselines, leave-one-slide-out, statistical tests) --
+               the second-organ generalization check
+run_loso.sh    Runs the leave-one-slide-out validity check on IDC
 ```
 
 ## Reproducing the results
@@ -34,12 +38,16 @@ run_loso.sh    Runs the leave-one-slide-out validity check
 1. Install dependencies: `pip install -r requirements.txt`, plus
    PyTorch/CUDA and HEST-Bench per the notes at the bottom of
    `requirements.txt`.
-2. Download the IDC cohort of HEST-Bench (patches + Xenium expression) into
-   `data/hest-bench/IDC/` following HEST-Bench's own instructions.
-3. Run `./rerun_all.sh` to reproduce the main experiment (both encoders,
-   4 seeds each, the JPEG and stain-shift magnitude sweeps, the floor
-   baselines, the statistical tests, and every table/figure).
-4. Run `./run_loso.sh` for the leave-one-slide-out validity check.
+2. Download the IDC and COAD cohorts of HEST-Bench (patches + Xenium
+   expression) into `data/hest-bench/IDC/` and `data/hest-bench/COAD/`
+   following HEST-Bench's own instructions.
+3. Run `./rerun_all.sh` to reproduce the main IDC experiment (both
+   encoders, 4 seeds each, the JPEG and stain-shift magnitude sweeps, the
+   floor baselines, the statistical tests, and every table/figure).
+4. Run `./run_loso.sh` for the IDC leave-one-slide-out validity check.
+5. Run `./run_coad.sh` to reproduce the second-organ (COAD) generalization
+   check (both encoders, 4 seeds, floor baselines, leave-one-slide-out,
+   statistical tests).
 
 Individual analysis steps can also be run directly, e.g.:
 
@@ -53,10 +61,11 @@ python3 src/generate_paper_figures.py
 ## Data
 
 Patch and expression data are from [HEST-Bench](https://github.com/mahmoodlab/HEST)
-(CC BY-NC-SA 4.0); the IDC samples used here are publicly released 10x
-Genomics Xenium breast cancer datasets. CONCH and UNI checkpoints are
-obtained from their respective gated HuggingFace repositories under each
-model's own license terms.
+(CC BY-NC-SA 4.0); the IDC and COAD samples used here are publicly
+released 10x Genomics Xenium breast and colorectal cancer datasets
+respectively. CONCH and UNI checkpoints are obtained from their
+respective gated HuggingFace repositories under each model's own license
+terms.
 
 ## Citation
 

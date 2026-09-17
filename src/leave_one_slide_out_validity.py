@@ -55,7 +55,6 @@ from main_experiment import (
 from gene_program_scoring import load_hallmark_gene_sets, load_program_config
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-ORGAN = "IDC"
 N_PATCHES = 3000
 SEED = 42
 
@@ -64,10 +63,12 @@ def main():
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--encoder", choices=list(ENCODERS.keys()), default="conch")
+    parser.add_argument("--organ", default="IDC", help="organ to run the leave-one-slide-out check on")
     args = parser.parse_args()
+    ORGAN = args.organ
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"[setup] device={device}, encoder={args.encoder}", flush=True)
+    print(f"[setup] device={device}, encoder={args.encoder}, organ={ORGAN}", flush=True)
 
     sample_ids = sorted(p.stem for p in (DATA_ROOT / ORGAN / "patches").glob("*.h5"))
     base, remainder = divmod(N_PATCHES, len(sample_ids))
@@ -177,7 +178,8 @@ def main():
                      "r2_hallmark": r2_hm, "r2_hallmark_median": r2_hm_median})
 
     df = pd.DataFrame(rows)
-    out = PROJECT_ROOT / "results" / f"leave_one_slide_out_validity_{args.encoder}.csv"
+    organ_tag = "" if ORGAN.upper() == "IDC" else f"_{ORGAN.lower()}"
+    out = PROJECT_ROOT / "results" / f"leave_one_slide_out_validity{organ_tag}_{args.encoder}.csv"
     df.to_csv(out, index=False)
     print(f"\nWrote {len(df)} rows to {out}")
     print(f"\nMean across 4 slide-held-out folds: r={df.pearson_r.mean():.4f} (range {df.pearson_r.min():.4f}-{df.pearson_r.max():.4f}), "

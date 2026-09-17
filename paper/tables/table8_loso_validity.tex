@@ -1,22 +1,32 @@
 \begin{table}[t]
 \centering
-\caption{Leave-one-slide-out validity on IDC: Ridge head fit on 3 slides, evaluated on the 4th (never seen during fitting), for every slide in turn. Compare $r$ against Table~\ref{tab:validity}'s random-split numbers (CONCH 0.559/0.614, UNI 0.604/0.661 whole-panel/Hallmark) -- lower here, but still clearly positive. $R^2$(mean) is the standard multi-output average across genes; $R^2$(median) is the median per-gene value, reported because a handful of outlier genes with poor between-slide calibration dominate the mean (e.g.\ CONCH/NCBI785: mean $-68.9$, median $-0.24$) -- the median is a better summary of the typical gene's out-of-slide calibration, though both are real and disclosed here rather than only the more dramatic one. The bottom row of each encoder block is that encoder's mean $r$/mean $R^2$ across its 4 folds, with the median column showing the median of each fold's own per-gene median (not re-derived from pooled per-gene values).}
+\caption{Leave-one-slide-out validity on IDC and COAD: Ridge head fit on 3 slides, evaluated on the 4th (never seen during fitting), for every slide in turn. Compare $r$ against Table~\ref{tab:validity}'s random-split numbers -- lower here, but still clearly positive for both organs. $R^2$(mean) is the standard multi-output average across genes; $R^2$(median) is the median per-gene value, reported because a handful of outlier genes with poor between-slide calibration dominate the mean (e.g.\ IDC CONCH/NCBI785: mean $-68.9$, median $-0.24$) -- the median is a better summary of the typical gene's out-of-slide calibration, though both are real and disclosed here rather than only the more dramatic one. The bottom row of each organ/encoder block is that block's mean $r$/mean $R^2$ across its 4 folds, with the median column showing the median of each fold's own per-gene median (not re-derived from pooled per-gene values).}
 \label{tab:loso_validity}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{llcccccc}
+\begin{tabular}{llccccccc}
 \toprule
-Encoder & Held-out slide & $r$ & $r$ (Hallmark) & $R^2$ (mean) & $R^2$ (median) & $R^2_{\text{Hallmark}}$ (mean) & $R^2_{\text{Hallmark}}$ (median) \\
+Organ & Encoder & Held-out slide & $r$ & $r$ (Hallmark) & $R^2$ (mean) & $R^2$ (median) & $R^2_{\text{Hallmark}}$ (mean) & $R^2_{\text{Hallmark}}$ (median) \\
 \midrule
-CONCH & NCBI783 & 0.302 & 0.389 & -1.14 & -0.031 & -0.45 & -0.002 \\
-CONCH & NCBI785 & 0.387 & 0.484 & -68.88 & -0.241 & -0.42 & -0.008 \\
-CONCH & TENX95 & 0.405 & 0.512 & -1.05 & -0.152 & -0.42 & 0.018 \\
-CONCH & TENX99 & 0.255 & 0.329 & -8.25 & -0.126 & -1.29 & -0.107 \\
-\textit{CONCH mean} & -- & 0.337 & 0.428 & -19.83 & -0.139 & -0.65 & -0.005 \\
-UNI & NCBI783 & 0.337 & 0.425 & -0.84 & 0.000 & -0.30 & 0.079 \\
-UNI & NCBI785 & 0.414 & 0.519 & -25.19 & -0.093 & -0.38 & 0.084 \\
-UNI & TENX95 & 0.415 & 0.534 & -1.07 & -0.069 & -0.44 & 0.050 \\
-UNI & TENX99 & 0.274 & 0.360 & -8.71 & -0.072 & -0.70 & -0.039 \\
-\textit{UNI mean} & -- & 0.360 & 0.459 & -8.96 & -0.070 & -0.46 & 0.065 \\
+IDC & CONCH & NCBI783 & 0.302 & 0.389 & -1.14 & -0.031 & -0.45 & -0.002 \\
+IDC & CONCH & NCBI785 & 0.387 & 0.484 & -68.88 & -0.241 & -0.42 & -0.008 \\
+IDC & CONCH & TENX95 & 0.405 & 0.512 & -1.05 & -0.152 & -0.42 & 0.018 \\
+IDC & CONCH & TENX99 & 0.255 & 0.329 & -8.25 & -0.126 & -1.29 & -0.107 \\
+IDC & \textit{CONCH mean} & -- & 0.337 & 0.428 & -19.83 & -0.139 & -0.65 & -0.005 \\
+IDC & UNI & NCBI783 & 0.337 & 0.425 & -0.84 & 0.000 & -0.30 & 0.079 \\
+IDC & UNI & NCBI785 & 0.414 & 0.519 & -25.19 & -0.093 & -0.38 & 0.084 \\
+IDC & UNI & TENX95 & 0.415 & 0.534 & -1.07 & -0.069 & -0.44 & 0.050 \\
+IDC & UNI & TENX99 & 0.274 & 0.360 & -8.71 & -0.072 & -0.70 & -0.039 \\
+IDC & \textit{UNI mean} & -- & 0.360 & 0.459 & -8.96 & -0.070 & -0.46 & 0.065 \\
+COAD & CONCH & TENX111 & 0.296 & 0.432 & -109.55 & -0.546 & -9.00 & -0.112 \\
+COAD & CONCH & TENX147 & 0.423 & 0.446 & -0.98 & 0.026 & -1.21 & 0.026 \\
+COAD & CONCH & TENX148 & 0.417 & 0.457 & -0.87 & -0.022 & -1.81 & -0.041 \\
+COAD & CONCH & TENX149 & 0.471 & 0.500 & -0.44 & 0.119 & -0.69 & 0.113 \\
+COAD & \textit{CONCH mean} & -- & 0.402 & 0.459 & -27.96 & 0.002 & -3.18 & -0.008 \\
+COAD & UNI & TENX111 & 0.334 & 0.480 & -86.26 & -0.354 & -15.48 & -0.033 \\
+COAD & UNI & TENX147 & 0.439 & 0.452 & -0.76 & 0.055 & -1.07 & 0.040 \\
+COAD & UNI & TENX148 & 0.457 & 0.499 & -0.73 & 0.021 & -1.58 & 0.032 \\
+COAD & UNI & TENX149 & 0.498 & 0.536 & -0.41 & 0.155 & -0.37 & 0.172 \\
+COAD & \textit{UNI mean} & -- & 0.432 & 0.491 & -22.04 & 0.038 & -4.63 & 0.036 \\
 \bottomrule
 \end{tabular}%
 }

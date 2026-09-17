@@ -27,23 +27,25 @@ OUT.mkdir(parents=True, exist_ok=True)
 
 
 def table1_validity():
-    conch = pd.read_csv(RESULTS / "main_experiment_results_idc.csv").iloc[0]
-    uni = pd.read_csv(RESULTS / "main_experiment_results_idc_uni.csv").iloc[0]
     rows = []
-    for name, row in [("CONCH (ViT-B/16, 86M)", conch), ("UNI (ViT-L/16, 307M)", uni)]:
-        rows.append(
-            f"{name} & {row['heldout_mean_pearson_r']:.3f} & "
-            f"{row['heldout_mean_pearson_r_hallmark_genes']:.3f} & "
-            f"{row['ridge_alpha_selected']:.3g} "
-            f"[{row['ridge_alpha_min']:.3g}, {row['ridge_alpha_max']:.3g}] \\\\"
-        )
+    for organ in ["idc", "coad"]:
+        conch = pd.read_csv(RESULTS / f"main_experiment_results_{organ}.csv").iloc[0]
+        uni = pd.read_csv(RESULTS / f"main_experiment_results_{organ}_uni.csv").iloc[0]
+        for name, row in [(f"{organ.upper()} & CONCH (ViT-B/16, 86M)", conch),
+                           (f"{organ.upper()} & UNI (ViT-L/16, 307M)", uni)]:
+            rows.append(
+                f"{name} & {row['heldout_mean_pearson_r']:.3f} & "
+                f"{row['heldout_mean_pearson_r_hallmark_genes']:.3f} & "
+                f"{row['ridge_alpha_selected']:.3g} "
+                f"[{row['ridge_alpha_min']:.3g}, {row['ridge_alpha_max']:.3g}] \\\\"
+            )
     tex = r"""\begin{table}[t]
 \centering
-\caption{Held-out (out-of-sample) predictive validity on IDC (2100 train / 900 held-out patches, seed=42). Ridge $\alpha$ selected per-gene via efficient leave-one-out cross-validation (\texttt{RidgeCV}, \texttt{alpha\_per\_target=True}); median [min, max] shown across the panel's genes.}
+\caption{Held-out (out-of-sample) predictive validity on IDC and COAD (2100 train / 900 held-out patches per organ, seed=42). Ridge $\alpha$ selected per-gene via efficient leave-one-out cross-validation (\texttt{RidgeCV}, \texttt{alpha\_per\_target=True}); median [min, max] shown across the panel's genes.}
 \label{tab:validity}
-\begin{tabular}{lccc}
+\begin{tabular}{llccc}
 \toprule
-Encoder & $r$ (whole panel) & $r$ (Hallmark genes) & Ridge $\alpha$ \\
+Organ & Encoder & $r$ (whole panel) & $r$ (Hallmark genes) & Ridge $\alpha$ \\
 \midrule
 """ + "\n".join(rows) + r"""
 \bottomrule
@@ -62,23 +64,24 @@ def table1b_baseline_comparison():
     R^2 is the only metric shown here (not Pearson r) because r is undefined
     for training_mean's constant prediction -- see baseline_models.py's
     module docstring."""
-    conch = pd.read_csv(RESULTS / "main_experiment_results_idc.csv").iloc[0]
-    uni = pd.read_csv(RESULTS / "main_experiment_results_idc_uni.csv").iloc[0]
-    baselines = pd.read_csv(RESULTS / "baseline_models_idc.csv").set_index("model")
-    rows = []
-    for name, row in [("CONCH-Ridge (ours)", conch), ("UNI-Ridge (ours)", uni)]:
-        rows.append(f"{tex_escape(name)} & {row['heldout_mean_r2']:.3f} & {row['heldout_mean_r2_hallmark_genes']:.3f} \\\\")
     display_names = {"training_mean": "Training-mean (no image)", "total_counts_linear": "Total-counts-linear (1 feature)"}
-    for model, row in baselines.iterrows():
-        rows.append(f"{tex_escape(display_names.get(model, model))} & {row['heldout_mean_r2']:.3f} & "
-                     f"{row['heldout_mean_r2_hallmark_genes']:.3f} \\\\")
+    rows = []
+    for organ in ["idc", "coad"]:
+        conch = pd.read_csv(RESULTS / f"main_experiment_results_{organ}.csv").iloc[0]
+        uni = pd.read_csv(RESULTS / f"main_experiment_results_{organ}_uni.csv").iloc[0]
+        baselines = pd.read_csv(RESULTS / f"baseline_models_{organ}.csv").set_index("model")
+        for name, row in [(f"{organ.upper()} & CONCH-Ridge (ours)", conch), (f"{organ.upper()} & UNI-Ridge (ours)", uni)]:
+            rows.append(f"{name} & {row['heldout_mean_r2']:.3f} & {row['heldout_mean_r2_hallmark_genes']:.3f} \\\\")
+        for model, row in baselines.iterrows():
+            rows.append(f"{organ.upper()} & {tex_escape(display_names.get(model, model))} & {row['heldout_mean_r2']:.3f} & "
+                         f"{row['heldout_mean_r2_hallmark_genes']:.3f} \\\\")
     tex = r"""\begin{table}[t]
 \centering
-\caption{Held-out $R^2$ against two floor baselines, identical IDC train/held-out split as Table~\ref{tab:validity} (seed=42). \texttt{Training-mean} predicts every held-out patch with the training set's per-gene mean (no image, no metadata). \texttt{Total-counts-linear} predicts from a single feature -- the patch's own raw (pre-normalization) total panel counts -- exactly the confound the library-size normalization fix targets; because normalization makes every patch's target sum to the same value by construction, this baseline can only detect a confound in \emph{relative} composition, not overall scale, so its small $R^2$ is a limited, not fully independent, check.}
+\caption{Held-out $R^2$ against two floor baselines, identical IDC and COAD train/held-out splits as Table~\ref{tab:validity} (seed=42). \texttt{Training-mean} predicts every held-out patch with the training set's per-gene mean (no image, no metadata). \texttt{Total-counts-linear} predicts from a single feature -- the patch's own raw (pre-normalization) total panel counts -- exactly the confound the library-size normalization fix targets; because normalization makes every patch's target sum to the same value by construction, this baseline can only detect a confound in \emph{relative} composition, not overall scale, so its small $R^2$ is a limited, not fully independent, check.}
 \label{tab:baseline_comparison}
-\begin{tabular}{lcc}
+\begin{tabular}{llcc}
 \toprule
-Model & $R^2$ (whole panel) & $R^2$ (Hallmark genes) \\
+Organ & Model & $R^2$ (whole panel) & $R^2$ (Hallmark genes) \\
 \midrule
 """ + "\n".join(rows) + r"""
 \bottomrule
@@ -101,27 +104,28 @@ def table8_loso_validity():
     unbounded below, unlike r). The median per-gene R^2 is reported
     alongside so a reader isn't left with only the outlier-driven number."""
     rows = []
-    for encoder, label in [("conch", "CONCH"), ("uni", "UNI")]:
-        df = pd.read_csv(RESULTS / f"leave_one_slide_out_validity_{encoder}.csv")
-        for _, r in df.iterrows():
+    for organ, organ_file_tag in [("IDC", ""), ("COAD", "_coad")]:
+        for encoder, label in [("conch", "CONCH"), ("uni", "UNI")]:
+            df = pd.read_csv(RESULTS / f"leave_one_slide_out_validity{organ_file_tag}_{encoder}.csv")
+            for _, r in df.iterrows():
+                rows.append(
+                    f"{organ} & {label} & {tex_escape(r['held_out_slide'])} & {r['pearson_r']:.3f} & "
+                    f"{r['pearson_r_hallmark']:.3f} & {r['r2']:.2f} & {r['r2_median']:.3f} & "
+                    f"{r['r2_hallmark']:.2f} & {r['r2_hallmark_median']:.3f} \\\\"
+                )
             rows.append(
-                f"{label} & {tex_escape(r['held_out_slide'])} & {r['pearson_r']:.3f} & "
-                f"{r['pearson_r_hallmark']:.3f} & {r['r2']:.2f} & {r['r2_median']:.3f} & "
-                f"{r['r2_hallmark']:.2f} & {r['r2_hallmark_median']:.3f} \\\\"
+                f"{organ} & \\textit{{{label} mean}} & -- & {df['pearson_r'].mean():.3f} & "
+                f"{df['pearson_r_hallmark'].mean():.3f} & {df['r2'].mean():.2f} & {df['r2_median'].median():.3f} & "
+                f"{df['r2_hallmark'].mean():.2f} & {df['r2_hallmark_median'].median():.3f} \\\\"
             )
-        rows.append(
-            f"\\textit{{{label} mean}} & -- & {df['pearson_r'].mean():.3f} & "
-            f"{df['pearson_r_hallmark'].mean():.3f} & {df['r2'].mean():.2f} & {df['r2_median'].median():.3f} & "
-            f"{df['r2_hallmark'].mean():.2f} & {df['r2_hallmark_median'].median():.3f} \\\\"
-        )
     tex = r"""\begin{table}[t]
 \centering
-\caption{Leave-one-slide-out validity on IDC: Ridge head fit on 3 slides, evaluated on the 4th (never seen during fitting), for every slide in turn. Compare $r$ against Table~\ref{tab:validity}'s random-split numbers (CONCH 0.559/0.614, UNI 0.604/0.661 whole-panel/Hallmark) -- lower here, but still clearly positive. $R^2$(mean) is the standard multi-output average across genes; $R^2$(median) is the median per-gene value, reported because a handful of outlier genes with poor between-slide calibration dominate the mean (e.g.\ CONCH/NCBI785: mean $-68.9$, median $-0.24$) -- the median is a better summary of the typical gene's out-of-slide calibration, though both are real and disclosed here rather than only the more dramatic one. The bottom row of each encoder block is that encoder's mean $r$/mean $R^2$ across its 4 folds, with the median column showing the median of each fold's own per-gene median (not re-derived from pooled per-gene values).}
+\caption{Leave-one-slide-out validity on IDC and COAD: Ridge head fit on 3 slides, evaluated on the 4th (never seen during fitting), for every slide in turn. Compare $r$ against Table~\ref{tab:validity}'s random-split numbers -- lower here, but still clearly positive for both organs. $R^2$(mean) is the standard multi-output average across genes; $R^2$(median) is the median per-gene value, reported because a handful of outlier genes with poor between-slide calibration dominate the mean (e.g.\ IDC CONCH/NCBI785: mean $-68.9$, median $-0.24$) -- the median is a better summary of the typical gene's out-of-slide calibration, though both are real and disclosed here rather than only the more dramatic one. The bottom row of each organ/encoder block is that block's mean $r$/mean $R^2$ across its 4 folds, with the median column showing the median of each fold's own per-gene median (not re-derived from pooled per-gene values).}
 \label{tab:loso_validity}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{llcccccc}
+\begin{tabular}{llccccccc}
 \toprule
-Encoder & Held-out slide & $r$ & $r$ (Hallmark) & $R^2$ (mean) & $R^2$ (median) & $R^2_{\text{Hallmark}}$ (mean) & $R^2_{\text{Hallmark}}$ (median) \\
+Organ & Encoder & Held-out slide & $r$ & $r$ (Hallmark) & $R^2$ (mean) & $R^2$ (median) & $R^2_{\text{Hallmark}}$ (mean) & $R^2_{\text{Hallmark}}$ (median) \\
 \midrule
 """ + "\n".join(rows) + r"""
 \bottomrule
@@ -133,7 +137,7 @@ Encoder & Held-out slide & $r$ & $r$ (Hallmark) & $R^2$ (mean) & $R^2$ (median) 
     print("Wrote table8_loso_validity.tex")
 
 
-def table2_gpfr_significance(encoder_label: str, stats_path: str, out_name: str):
+def table2_gpfr_significance(encoder_label: str, stats_path: str, out_name: str, organ_label: str = "IDC"):
     """STAR RULE (2026-09-17, second-adversarial-review-caught): a row used
     to be starred whenever significant_fdr_0.05 was True, with no check on
     the CI itself. With only 4 slides to cluster-bootstrap over, several
@@ -162,7 +166,7 @@ def table2_gpfr_significance(encoder_label: str, stats_path: str, out_name: str)
         )
     tex = r"""\begin{table}[t]
 \centering
-\caption{""" + encoder_label + r""": Gene-Program Flip Rate (GPFR) per perturbation/program on IDC, with 95\% CI from the 4-slide cluster bootstrap (2000 resamples) and Benjamini-Hochberg FDR-corrected $q$-value across all 35 tests. $^{*}$ FDR$<$0.05 AND the CI's lower bound does not round to 0.000 -- with only 4 slides to resample, the one-sided bootstrap $p$-value is quantized (at most $4^4=256$ distinct resample outcomes, giving as few as 6--9 distinct $p$-values across all 35 tests here), so it can reject the boundary null for an interval that still visibly touches zero; requiring both keeps the star consistent with the printed interval.}
+\caption{""" + encoder_label + r": Gene-Program Flip Rate (GPFR) per perturbation/program on " + organ_label + r""", with 95\% CI from the 4-slide cluster bootstrap (2000 resamples) and Benjamini-Hochberg FDR-corrected $q$-value across all 35 tests. $^{*}$ FDR$<$0.05 AND the CI's lower bound does not round to 0.000 -- with only 4 slides to resample, the one-sided bootstrap $p$-value is quantized (at most $4^4=256$ distinct resample outcomes, giving as few as 6--9 distinct $p$-values across all 35 tests here), so it can reject the boundary null for an interval that still visibly touches zero; requiring both keeps the star consistent with the printed interval.}
 \label{tab:gpfr_""" + out_name + r"""}
 \begin{tabular}{llccc}
 \toprule
@@ -207,54 +211,67 @@ $z_{\text{thresh}}$ & CONCH $\rho$ & UNI $\rho$ \\
     print("Wrote table3_z_sensitivity.tex")
 
 
-def table4_seed_stability(encoder_label: str, base_fname: str, out_name: str, label_suffix: str):
-    """base_fname: the seed-42 filename, e.g. 'main_experiment_results_idc.csv'
-    or 'main_experiment_results_idc_uni.csv'; the seed7/123/2024 variants are
-    derived by inserting '_seedN' before the (optional) '_uni' suffix, matching
-    main_experiment.py's seed_tag naming (see its ORGAN-SCOPE IN FILENAME
-    comment) -- CONCH keeps the encoder suffix empty, UNI appends '_uni'.
-    The caption's specific claims (which perturbations cluster, which is most/
-    least stable) are computed from the actual data, not hardcoded, so this
-    stays correct across re-runs with different numbers."""
-    stem, suffix = (base_fname[:-len("_uni.csv")], "_uni") if base_fname.endswith("_uni.csv") else (base_fname[:-4], "")
-    seeds = {42: base_fname, 7: f"{stem}_seed7{suffix}.csv", 123: f"{stem}_seed123{suffix}.csv",
-             2024: f"{stem}_seed2024{suffix}.csv"}
-    cols = []
-    for seed, fname in seeds.items():
-        df = pd.read_csv(RESULTS / fname)
-        cols.append(df.groupby("perturbation")["gpfr"].max().rename(seed))
-    table = pd.concat(cols, axis=1)
-    table["mean"] = table[[42, 7, 123, 2024]].mean(axis=1)
-    table["std"] = table[[42, 7, 123, 2024]].std(axis=1)
-    table = table.sort_values("mean", ascending=False)
+def table4_seed_stability(encoder_label: str, base_fnames: dict[str, str], out_name: str, label_suffix: str):
+    """base_fnames: {organ_label: seed-42 filename}, e.g.
+    {'IDC': 'main_experiment_results_idc.csv', 'COAD': 'main_experiment_results_coad.csv'};
+    the seed7/123/2024 variants are derived by inserting '_seedN' before the
+    (optional) '_uni' suffix, matching main_experiment.py's seed_tag naming
+    (see its ORGAN-SCOPE IN FILENAME comment) -- CONCH keeps the encoder
+    suffix empty, UNI appends '_uni'. One combined table per encoder across
+    both organs (an Organ column), rather than a separate table per organ,
+    to stay within Scientific Reports' 8-display-item guideline. The
+    caption's specific claims are computed from the actual data per organ,
+    not hardcoded, so this stays correct across re-runs with different
+    numbers."""
     rows = []
-    for pert, row in table.iterrows():
-        rows.append(
-            f"{tex_escape(pert)} & {row[42]:.3f} & {row[7]:.3f} & "
-            f"{row[123]:.3f} & {row[2024]:.3f} & {row['mean']:.3f} $\\pm$ {row['std']:.3f} \\\\"
+    per_organ_summary = {}
+    for organ_label, base_fname in base_fnames.items():
+        stem, suffix = (base_fname[:-len("_uni.csv")], "_uni") if base_fname.endswith("_uni.csv") else (base_fname[:-4], "")
+        seeds = {42: base_fname, 7: f"{stem}_seed7{suffix}.csv", 123: f"{stem}_seed123{suffix}.csv",
+                 2024: f"{stem}_seed2024{suffix}.csv"}
+        cols = []
+        for seed, fname in seeds.items():
+            df = pd.read_csv(RESULTS / fname)
+            cols.append(df.groupby("perturbation")["gpfr"].max().rename(seed))
+        table = pd.concat(cols, axis=1)
+        table["mean"] = table[[42, 7, 123, 2024]].mean(axis=1)
+        table["std"] = table[[42, 7, 123, 2024]].std(axis=1)
+        table = table.sort_values("mean", ascending=False)
+        for pert, row in table.iterrows():
+            rows.append(
+                f"{organ_label} & {tex_escape(pert)} & {row[42]:.3f} & {row[7]:.3f} & "
+                f"{row[123]:.3f} & {row[2024]:.3f} & {row['mean']:.3f} $\\pm$ {row['std']:.3f} \\\\"
+            )
+        per_organ_summary[organ_label] = table
+    caption_parts = []
+    for organ_label, table in per_organ_summary.items():
+        top_pert = table.index[0]
+        most_stable = table["std"].idxmin()
+        least_stable = table["std"].idxmax()
+        caption_parts.append(
+            f"On {organ_label}, \\texttt{{{tex_escape(top_pert)}}} has the highest mean max-GPFR "
+            f"({table.loc[top_pert, 'mean']:.3f}); \\texttt{{{tex_escape(most_stable)}}} is the most stable "
+            f"across seeds (std={table.loc[most_stable, 'std']:.3f}), \\texttt{{{tex_escape(least_stable)}}} the least "
+            f"(std={table.loc[least_stable, 'std']:.3f})."
         )
-    top_pert = table.index[0]
-    most_stable = table["std"].idxmin()
-    least_stable = table["std"].idxmax()
     caption = (
         f"{encoder_label}: maximum GPFR (across the 5 programs) per perturbation, across 4 re-splits of "
-        f"IDC's same 4 slides into different random train/held-out patch assignments (seeds 42, 7, 123, "
-        f"2024 -- not 4 different slides). \\texttt{{{tex_escape(top_pert)}}} has the highest mean "
-        f"max-GPFR ({table.loc[top_pert, 'mean']:.3f}); \\texttt{{{tex_escape(most_stable)}}} is the most stable "
-        f"across seeds (std={table.loc[most_stable, 'std']:.3f}), \\texttt{{{tex_escape(least_stable)}}} the least "
-        f"(std={table.loc[least_stable, 'std']:.3f})."
+        f"each organ's same slides into different random train/held-out patch assignments (seeds 42, 7, 123, "
+        f"2024 -- not different slides). " + " ".join(caption_parts)
     )
     tex = r"""\begin{table}[t]
 \centering
 \caption{""" + caption + r"""}
 \label{tab:seed_stability""" + label_suffix + r"""}
-\begin{tabular}{lccccc}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llccccc}
 \toprule
-Perturbation & seed 42 & seed 7 & seed 123 & seed 2024 & mean $\pm$ std \\
+Organ & Perturbation & seed 42 & seed 7 & seed 123 & seed 2024 & mean $\pm$ std \\
 \midrule
 """ + "\n".join(rows) + r"""
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 """
     (OUT / f"table4_seed_stability{out_name}.tex").write_text(tex)
@@ -457,11 +474,13 @@ if __name__ == "__main__":
     table1_validity()
     table1b_baseline_comparison()
     table8_loso_validity()
-    table2_gpfr_significance("CONCH", "idc_core_with_stats.csv", "conch")
-    table2_gpfr_significance("UNI", "idc_core_uni_with_stats.csv", "uni")
+    table2_gpfr_significance("CONCH", "idc_core_with_stats.csv", "conch", organ_label="IDC")
+    table2_gpfr_significance("UNI", "idc_core_uni_with_stats.csv", "uni", organ_label="IDC")
+    table2_gpfr_significance("CONCH", "coad_core_with_stats.csv", "coad_conch", organ_label="COAD")
+    table2_gpfr_significance("UNI", "coad_core_uni_with_stats.csv", "coad_uni", organ_label="COAD")
     table3_z_sensitivity()
-    table4_seed_stability("CONCH", "main_experiment_results_idc.csv", "", "")
-    table4_seed_stability("UNI", "main_experiment_results_idc_uni.csv", "_uni", "_uni")
+    table4_seed_stability("CONCH", {"IDC": "main_experiment_results_idc.csv", "COAD": "main_experiment_results_coad.csv"}, "", "")
+    table4_seed_stability("UNI", {"IDC": "main_experiment_results_idc_uni.csv", "COAD": "main_experiment_results_coad_uni.csv"}, "_uni", "_uni")
     table5_fragility_decomposition()
     table6_jpeg_dose_response()
     table7_stain_magnitude_sweep()

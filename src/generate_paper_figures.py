@@ -34,22 +34,7 @@ def crop_example_rows(src_name: str, out_name: str, n_rows: int = 2):
     print(f"Wrote {OUT_DIR / out_name} ({crop.width}x{crop.height}, cropped from {src_name})")
 
 
-def gpfr_divergence_bar_chart():
-    """ERROR BARS ADDED (2026-09-17, third-adversarial-review-caught): this
-    used to plot bare point estimates while the Results text spends a
-    paragraph insisting the CI, not the point estimate, is what should be
-    read for precision (4-slide cluster bootstrap CIs are wide -- e.g.
-    UNI's largest bar has a 95% CI of [0.093, 0.640]). Plotting the bar
-    without its CI made the headline figure look far more decisive than
-    the underlying data actually is."""
-    conch = pd.read_csv(PROJECT_ROOT / "results" / "idc_core_with_stats.csv")
-    uni = pd.read_csv(PROJECT_ROOT / "results" / "idc_core_uni_with_stats.csv")
-
-    # Max GPFR per perturbation (across the 5 programs) — the "how bad does
-    # this perturbation get" summary, one bar per perturbation per encoder.
-    # Use the CI of the specific (perturbation, program) ROW that attains
-    # the max, not some other aggregate -- that's the row the bar height
-    # actually represents.
+def _plot_organ_panel(ax, conch, uni, title):
     conch_max_row = conch.loc[conch.groupby("perturbation")["gpfr"].idxmax()].set_index("perturbation")
     uni_max_row = uni.loc[uni.groupby("perturbation")["gpfr"].idxmax()].set_index("perturbation")
     perturbations = sorted(set(conch_max_row.index) | set(uni_max_row.index),
@@ -63,18 +48,41 @@ def gpfr_divergence_bar_chart():
 
     x = np.arange(len(perturbations))
     width = 0.35
-    fig, ax = plt.subplots(figsize=(7, 4))
     ax.bar(x - width/2, conch_max_row["gpfr"].reindex(perturbations).fillna(0), width, label="CONCH", color="#4C72B0",
            yerr=err(conch_max_row, perturbations), capsize=3, ecolor="black", error_kw={"elinewidth": 1})
     ax.bar(x + width/2, uni_max_row["gpfr"].reindex(perturbations).fillna(0), width, label="UNI", color="#DD8452",
            yerr=err(uni_max_row, perturbations), capsize=3, ecolor="black", error_kw={"elinewidth": 1})
     ax.set_xticks(x)
     ax.set_xticklabels([p.replace("_", "\n") for p in perturbations], fontsize=9)
-    ax.set_ylabel("Max GPFR across 5 programs")
-    ax.set_title("Peak fragility per perturbation diverges by encoder")
-    ax.legend()
+    ax.set_title(title)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
+
+
+def gpfr_divergence_bar_chart():
+    """ERROR BARS ADDED (2026-09-17, third-adversarial-review-caught): this
+    used to plot bare point estimates while the Results text spends a
+    paragraph insisting the CI, not the point estimate, is what should be
+    read for precision (4-slide cluster bootstrap CIs are wide -- e.g.
+    UNI's largest bar has a 95% CI of [0.093, 0.640]). Plotting the bar
+    without its CI made the headline figure look far more decisive than
+    the underlying data actually is.
+
+    TWO-PANEL, TWO-ORGAN (2026-09-17): extended to a second, independently
+    downloaded organ (COAD) to test whether the CONCH/UNI divergence found
+    on IDC is an IDC-specific artifact or replicates elsewhere. Both panels
+    share a y-axis so bar heights are directly comparable across organs."""
+    conch_idc = pd.read_csv(PROJECT_ROOT / "results" / "idc_core_with_stats.csv")
+    uni_idc = pd.read_csv(PROJECT_ROOT / "results" / "idc_core_uni_with_stats.csv")
+    conch_coad = pd.read_csv(PROJECT_ROOT / "results" / "coad_core_with_stats.csv")
+    uni_coad = pd.read_csv(PROJECT_ROOT / "results" / "coad_core_uni_with_stats.csv")
+
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4), sharey=True)
+    _plot_organ_panel(axes[0], conch_idc, uni_idc, "IDC")
+    _plot_organ_panel(axes[1], conch_coad, uni_coad, "COAD")
+    axes[0].set_ylabel("Max GPFR across 5 programs")
+    axes[0].legend()
+    fig.suptitle("Peak fragility per perturbation diverges by encoder, on both organs")
     fig.tight_layout()
     out_path = OUT_DIR / "gpfr_encoder_divergence.png"
     fig.savefig(out_path, dpi=200)

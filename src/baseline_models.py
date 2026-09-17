@@ -47,12 +47,17 @@ from main_experiment import DATA_ROOT, load_organ_sample, PERTURBATION_CALIBRATI
 from gene_program_scoring import load_hallmark_gene_sets, load_program_config
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-ORGAN = "IDC"
 N_PATCHES = 3000
-SEED = 42  # matches main_experiment.py's primary (Table 1) IDC run
+SEED = 42  # matches main_experiment.py's primary (Table 1) run
 
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--organ", default="IDC", help="organ to fit the floor baselines on")
+    args = parser.parse_args()
+    ORGAN = args.organ
+
     sample_ids = sorted(p.stem for p in (DATA_ROOT / ORGAN / "patches").glob("*.h5"))
     base, remainder = divmod(N_PATCHES, len(sample_ids))
 
@@ -127,14 +132,14 @@ def main():
 
     print(f"\n[baseline] training_mean:        R^2(whole panel)={r2_mean_all:.4f}  R^2(Hallmark genes)={r2_mean_hm:.4f}")
     print(f"[baseline] total_counts_linear:  R^2(whole panel)={r2_counts_all:.4f}  R^2(Hallmark genes)={r2_counts_hm:.4f}")
-    print("\nCompare against main_experiment_results_idc.csv's heldout_mean_r2 / "
+    print(f"\nCompare against main_experiment_results_{ORGAN.lower()}.csv's heldout_mean_r2 / "
           "heldout_mean_r2_hallmark_genes for CONCH-Ridge on this same split.")
 
     out = pd.DataFrame([
         {"model": "training_mean", "heldout_mean_r2": r2_mean_all, "heldout_mean_r2_hallmark_genes": r2_mean_hm},
         {"model": "total_counts_linear", "heldout_mean_r2": r2_counts_all, "heldout_mean_r2_hallmark_genes": r2_counts_hm},
     ])
-    out_path = PROJECT_ROOT / "results" / "baseline_models_idc.csv"
+    out_path = PROJECT_ROOT / "results" / f"baseline_models_{ORGAN.lower()}.csv"
     out.to_csv(out_path, index=False)
     print(f"\nWrote {out_path}")
 
